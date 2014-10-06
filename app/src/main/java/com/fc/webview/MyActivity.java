@@ -20,21 +20,30 @@ public class MyActivity extends Activity {
         setContentView(R.layout.activity_my);
         webView = (WebView) findViewById(R.id.web_view);
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setAllowContentAccess(true);
+        webView.getSettings().setAllowFileAccess(true);
+        webView.getSettings().setDomStorageEnabled(true);
 
         webView.setWebViewClient(new WebViewClient(){
+
+            @Override
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                Log.i("MyActivity", "failingUrl:"+failingUrl+";description:"+description);
+                super.onReceivedError(view, errorCode, description, failingUrl);
+            }
+
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 Log.i("MyActivity", url);
-//                if (url.indexOf("http://shang.qq.com/wpa/qunwpa")!=-1) {
-//                    Intent intent = new Intent();
-//                    intent.setAction(Intent.ACTION_VIEW);
-//                    intent.setData(Uri.parse(url));
-//                    startActivity(intent);
-//                } else {
-                    view.loadUrl(url);
-//                }
-                return true;
+                if (url.indexOf("http://shang.qq.com/wpa/qunwpa")!=-1) {
+                    Intent intent = new Intent(MyActivity.this, JoinGroupQQActivity.class);
+                    intent.putExtra(JoinGroupQQActivity.JOIN_GROUP_QQ_URL, url);
+                    startActivity(intent);
+                    return true;
+                }
+                return false;
             }
+
         });
         webView.loadUrl("file:///android_asset/index.html");
 //        webView.addJavascriptInterface(new Object(){
